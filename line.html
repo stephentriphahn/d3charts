@@ -1,0 +1,102 @@
+ <html>
+ <head>
+	<title>D3 Practice</title>
+	 
+	<!--<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
+	
+	<style>
+		.axis line,
+		.axis path {
+			fill: none;
+			stroke: #000;
+			shape-rendering: crispEdges;
+		}		
+	</style>
+</head>
+<body>
+
+<p>click here</p>
+ 
+  
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+	
+	var margin = { top: 10, bottom: 30, left: 30, right: 20 };
+	
+	var width = 500 - margin.left - margin.right;
+	var height = 500 - margin.top - margin.bottom;
+	
+	var lineData = [  { "x": 1,   "y": 5},  { "x": 20,  "y": 20},
+							{ "x": 40,  "y": 10}, { "x": 60,  "y": 40},
+							{ "x": 80,  "y": 5},  { "x": 100, "y": 60}];
+							
+							
+	var svg = d3.select('body')
+					.append('svg')
+						.attr('height', height + margin.top + margin.bottom)
+						.attr('width', width + margin.left + margin.right)
+					.append('g')
+						.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+	
+		//basic scales 
+	var xScale = d3.scale.linear().domain([0, d3.max(lineData, function (d) { return d.x })]).range([0, width]);
+	var yScale = d3.scale.linear().domain([0, d3.max(lineData, function (d) { return d.y })]).range([height, 0]);
+		
+		//basic axes
+	var xAxis = d3.svg.axis().scale(xScale).orient('bottom').ticks(5);
+	var yAxis = d3.svg.axis().scale(yScale).orient('left').ticks(5);
+	
+	var lineFunction = d3.svg.line()
+									.x(function(d) {
+										return xScale(d.x);
+									})
+									.y(function(d) {
+										return yScale(d.y);
+									})
+									.interpolate('step-before');
+									
+	svg.append('path')
+		.attr('d', lineFunction(lineData))
+		.attr('fill', 'none')
+		.attr('stroke', 'steelblue')
+		.attr('stroke-width', 2);
+	
+	svg.append('g').attr('class', 'axis')
+		.call(xAxis).attr('transform', 'translate(0,' + height + ')');
+	svg.append('g').attr('class', 'axis')
+		.call(yAxis);
+			
+			
+			
+	//update section
+	
+	d3.selectAll('p').on('click', function() {
+		
+		var lineData = [  { "x": 4,   "y": 8},  { "x": 20,  "y": 60},
+								{ "x": 19,  "y": 70}, { "x": 20,  "y": 50},
+								{ "x": 30,  "y": 15},  { "x": 10, "y": 30} ];
+		
+		
+		
+		
+		//update scales
+		xScale.domain([0, d3.max(lineData, function(d) { return d.x; })]);
+		yScale.domain([0, d3.max(lineData, function (d) { return d.y; })]);
+		
+		svg.select('path').remove();
+		svg.append('path').transition().duration(1000).delay(function(d, i) { return i * 20 })
+			.attr('d', lineFunction(lineData))
+			.attr('stroke', 'green')
+			.attr('stroke-width', 2)
+			.attr('fill', 'none');
+	});
+		
+		
+		
+</script>
+
+
+</body>
+
+
+</html>

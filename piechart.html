@@ -1,0 +1,74 @@
+ <html>
+ <head>
+	<title>D3 Practice</title>
+	 
+	<!--<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
+	
+	<style>
+		.axis line, .axis path {
+			fill: none;
+			stroke: black;
+			shape-rendering: crispEdges;
+		}
+		
+		.axis text {
+			font-family: sans-serif;
+			font-size: 11px;
+		}
+		
+		rect:hover {
+			fill: gray;
+		}
+		
+		rect {
+        -moz-transition: all 0.3s;
+        -o-transition: all 0.3s;
+        -webkit-transition: all 0.3s;
+        transition: all 0.3s;
+		}
+		
+		svg text {
+        pointer-events: none;
+		}
+		button {
+			display: block;
+		}
+	</style>
+</head>
+<body>
+ 
+<button>click me to sort the chart</button>
+ 
+ 
+ 
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+	var h = 400;
+	var w = 400;
+	
+	var dataset = [ 5, 10, 20, 45, 6, 25 ];
+	
+	var pie = d3.layout.pie();
+	
+	var outerRadius = w / 2;
+	var innerRadius = 0;
+	var arc = d3.svg.arc()
+                .innerRadius(innerRadius)
+                .outerRadius(outerRadius);
+		
+	var svg = d3.select('body').append('svg').attr('width', w).attr('height', h);
+	
+	var arcs = svg.selectAll(g.arc)
+						.data(pie(dataset))
+						.enter()
+						.append('g')
+						.attr('class', 'arc')
+						.attr('transform', 'transition(' + outerRadius + ',' + outerRadius + ')')
+			
+</script>
+
+
+</body>
+
+
+</html>

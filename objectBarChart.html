@@ -1,0 +1,165 @@
+ <html>
+ <head>
+	<title>D3 Practice</title>
+	 
+	<!--<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
+	
+	<style>
+		.axis line, .axis path {
+			fill: none;
+			stroke: black;
+			shape-rendering: crispEdges;
+		}
+		
+		.axis text {
+			font-family: sans-serif;
+			font-size: 11px;
+		}
+	</style>
+</head>
+<body>
+ 
+ <p id="add">click here to add to the data </p>
+<p id="remove">Click here to remove a bar from the graph </p>
+ 
+ 
+ 
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+	
+	var dataset = [ { key: 0, value: 5 },
+                { key: 1, value: 10 },
+                { key: 2, value: 13 },
+                { key: 3, value: 19 },
+                { key: 4, value: 21 },
+                { key: 5, value: 25 },
+                { key: 6, value: 22 },
+                { key: 7, value: 18 },
+                { key: 8, value: 15 },
+                { key: 9, value: 13 },
+                { key: 10, value: 11 },
+                { key: 11, value: 12 },
+                { key: 12, value: 15 },
+                { key: 13, value: 20 },
+                { key: 14, value: 18 },
+                { key: 15, value: 17 },
+                { key: 16, value: 16 },
+                { key: 17, value: 18 },
+                { key: 18, value: 23 },
+                { key: 19, value: 25 } ];
+					 
+	
+	var w = 1200;
+	var h = 600;
+	
+					 
+	var xScale = d3.scale.ordinal().domain(d3.range(dataset.length)).rangeRoundBands([0, w], .05);
+	var yScale = d3.scale.linear().domain([0, d3.max(dataset, function(d) { return d.value; })]).range([0, h]);
+	
+	var xAxis = d3.svg.axis();
+	xAxis.scale(xScale)
+		.orient('bottom')
+		.ticks(8);
+	var yAxis = d3.svg.axis();
+	yAxis.scale(yScale)
+		.orient('left')
+		.ticks(5);
+	
+	var key = function key(d) {
+		return d.key;
+	}
+	//create bars
+	var svg = d3.select('body').append('svg').attr('height', h).attr('width', w);
+	
+	svg.selectAll('rect')
+		.data(dataset, key)
+		.enter()
+		.append('rect')
+			.attr('x', function (d, i) {
+				return xScale(i);
+			})
+			.attr('width', xScale.rangeBand())
+			.attr('height', function (d) {
+				return yScale(d.value);
+			})
+			.attr('y', function(d) {
+				return h - yScale(d.value);
+			})
+			.attr('fill', function(d) {
+				return 'rgb(' + (d.value * 10) + ',0,' + (d.value * 20) + ')';
+			});
+	
+	
+	d3.selectAll('p')
+		.on('click', function () {
+			
+			var paragraphId = d3.select(this).attr('id');
+			
+			if(paragraphId === 'remove'){
+			
+				dataset.shift();
+				
+			}else{
+				var maxValue = 25;
+				var newNumber = Math.floor(Math.random() * maxValue);
+				var lastIndex = dataset[dataset.length - 1].key;
+				
+				dataset.push({
+					key: lastIndex + 1,
+					value: newNumber
+				})
+			}
+			
+			
+			xScale.domain(d3.range(dataset.length));
+			yScale.domain([0, d3.max(dataset, function(d){ 
+				return d.value; 
+			})]);	
+			
+			var bars = svg.selectAll('rect')
+								.data(dataset, key);
+								
+			bars.enter()
+				.append('rect')
+				.attr('x', w)
+				.attr('y', function (d) {
+					return h - yScale(d.value);
+				})
+				.attr('width', xScale.rangeBand())
+				.attr('height', function (d) {
+					return yScale(d.value);
+				})
+				.attr('fill', function (d,i) {
+					return 'rgb(' + (i*10) + ',0,' + (d.value * 10) + ')';
+				});
+				
+
+			//update
+			bars.transition()
+				.duration(500)
+				.attr('x', function(d, i) {
+					return xScale(i);
+				})
+				.attr('y', function (d) {
+					return h - yScale(d.value);
+				})
+				.attr('width', xScale.rangeBand())
+				.attr('height', function (d) {
+					return yScale(d.value);
+				});	
+				
+			//exit
+			bars.exit()
+				.transition()
+				.duration(500)
+				.attr('x', -xScale.rangeBand())
+				.remove();
+		});
+	
+</script>
+
+
+</body>
+
+
+</html>
